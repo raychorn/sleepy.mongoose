@@ -7,6 +7,7 @@ if (not any([f == pylib for f in sys.path])):
     sys.path.insert(0, pylib)
     
 from vyperlogix.misc import _utils
+from vyperlogix.iterators.dict import dictutils
 
 import mujson as json
 
@@ -40,13 +41,16 @@ class MongoClient():
         print('DEBUG: kwargs -> {}'.format(kwargs))
         args = kwargs.get('args') if (kwargs is not None) else None
         if (args):
-            assert len(args) == 2, 'Expected the args to have two items, the database and the command verb.'
-            self.database = self.client[args[0]]
-            the_func = getattr(self.database, args[-1])
-            print('DEBUG: the_func -> {}'.format(the_func))
-            if (callable(the_func)):
-                resp = the_func()
-            return resp
+            if (len(args) >= 1):
+                self.database = self.client[args[0]]
+            if (len(args) == 3):
+                self.collection = self.database[args[1]]
+            if (len(args) >= 2):
+                the_func = getattr(self.database, args[-1])
+                print('DEBUG: the_func -> {}'.format(the_func))
+                if (callable(the_func)):
+                    resp = [c for c in the_func()]
+                return resp
         return kwargs
         
 
@@ -81,7 +85,7 @@ def catch_all(path):
                 the_response['/'.join(the_path)] = resp
             except Exception as ex:
                 print(_utils.formattedException(details=ex))
-    return Response(json.dumps(the_response), mimetype='application/json')
+    return Response(json.dumps(dictutils.json_cleaner(the_response)), mimetype='application/json')
 
 if (__name__ == '__main__'):
     #sys.argv.append('--help')

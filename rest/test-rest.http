@@ -25,3 +25,11 @@ GET http://localhost:27080/list_databases/ HTTP/1.1
 
 GET http://localhost:27080/_use/WORD-CLOUD/list_collections HTTP/1.1
 
+###
+
+GET http://localhost:27080/_use/WORD-CLOUD HTTP/1.1
+
+###
+
+GET http://localhost:27080/_use/WORD-CLOUD/articles/count_documents HTTP/1.1
+
