@@ -10,8 +10,18 @@ POST http://127.0.0.1:27080/_connect/ HTTP/1.1
 content-type: application/json
 
 {
-    "server": "172.24.125.247:27017",
-    "username": "root",
-    "password": "sisko@7660$boo",
-    "authenticationDatabase": "admin"
+    "MONGO_URI": "172.27.107.98:27017",
+    "MONGO_INITDB_ROOT_USERNAME": "root",
+    "MONGO_INITDB_ROOT_PASSWORD": "sisko@7660$boo",
+    "MONGO_INITDB_DATABASE": "admin",
+    "MONGO_AUTH_MECHANISM": "SCRAM-SHA-256"
 }
+
+###
+
+GET http://localhost:27080/list_databases/ HTTP/1.1
+
+###
+
+GET http://localhost:27080/_use/WORD-CLOUD/list_collections HTTP/1.1
+
