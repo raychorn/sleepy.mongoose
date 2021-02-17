@@ -48,6 +48,18 @@ GET http://localhost:27080/_use/WORD-CLOUD/articles/find HTTP/1.1
 
 ```
 
+#### find_one
+
+```
+POST http://127.0.0.1:27080/_use/WORD-CLOUD/articles/find_one HTTP/1.1
+content-type: application/json
+
+{
+    "filter": {"_id": "6011827480190cb556b7d406"}
+}
+
+```
+
 See [the wiki](https://github.com/10gen-labs/sleepy.mongoose/wiki) for documentation.
 
 (c). Copyright, Ray C Horn, All Rights Reserved.
