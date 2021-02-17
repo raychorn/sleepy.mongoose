@@ -2,6 +2,8 @@ import sys
 from flask import Flask, request, Response
 from flask.ext.runner import Runner
 
+from bson.objectid import ObjectId
+
 pylib = '/home/raychorn/projects/python-projects/private_vyperlogix_lib3'
 if (not any([f == pylib for f in sys.path])):
     sys.path.insert(0, pylib)
@@ -45,6 +47,15 @@ class MongoClient():
                 self.database = self.client[args[0]]
             if (len(args) == 3):
                 self.collection = self.database[args[1]]
+                the_func = getattr(self.collection, args[-1])
+                the_filter = kwargs.get('filter', {})
+                if (the_filter.get('_id')):
+                    the_filter['_id'] = ObjectId(the_filter.get('_id'))
+                print('DEBUG: the_filter -> {}'.format(the_filter))
+                if (callable(the_func)):
+                    resp = the_func(the_filter)
+                    resp = [c for c in resp] if (hasattr(resp, '__iter__')) else resp
+                return resp
             if (len(args) >= 2):
                 the_func = getattr(self.database, args[-1])
                 print('DEBUG: the_func -> {}'.format(the_func))
@@ -61,6 +72,7 @@ runner = Runner(app)
 @app.route('/<path:path>', methods=['GET', 'POST'])
 def catch_all(path):
     the_response = {"path": path}
+    the_path = path.split('/')
     print('request.method -> {}'.format(request.method))
     if (request.method in ['POST', 'PUT', 'DELETE']):
         try:
@@ -70,12 +82,26 @@ def catch_all(path):
         except Exception as ex:
             print(_utils.formattedException(details=ex))
             
+        was_handled = False
         for k,v in vectors.items():
             if (path.find(k) > -1):
                 client = v(data=d) if (callable(v)) else None
                 MongoClient.mongoClient = MongoClient(client)
+                was_handled = True
+        if (not was_handled):
+            the_func = getattr(MongoClient.mongoClient, the_path[0])
+            print('DEBUG: the_path -> {}, the_func -> {}'.format(the_path, the_func))
+            if (callable(the_func)):
+                try:
+                    kwargs = {'args': the_path[1:]}
+                    for k,v in d.items():
+                        kwargs[k] = v
+                    resp = the_func(kwargs)
+                    print('DEBUG: resp -> {}'.format(resp))
+                    the_response['/'.join(the_path)] = resp
+                except Exception as ex:
+                    print(_utils.formattedException(details=ex))
     elif (request.method in ['GET']):
-        the_path = path.split('/')
         the_func = getattr(MongoClient.mongoClient, the_path[0])
         print('DEBUG: the_path -> {}, the_func -> {}'.format(the_path, the_func))
         if (callable(the_func)):

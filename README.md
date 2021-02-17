@@ -1,10 +1,52 @@
 ## Sleepy.Mongoose via Flask on steroids.
 
-DISCLAIMER
-==========
-Please note: all tools/ scripts in this repo are released for use "AS IS" without any warranties of any kind, including, but not limited to their installation, use, or performance. We disclaim any and all warranties, either express or implied, including but not limited to any warranty of noninfringement, merchantability, and/ or fitness for a particular purpose. We do not warrant that the technology will meet your requirements, that the operation thereof will be uninterrupted or error-free, or that any errors will be corrected.
-Any use of these scripts and tools is at your own risk. There is no guarantee that they have been through thorough testing in a comparable environment and we are not responsible for any damage or data loss incurred with their use.
-You are responsible for reviewing and testing any scripts you run thoroughly before use in any non-testing environment.
+### About
+
+This is a reimagination of the original Sleepy Mongoose that used to work with Python 2.x but this one works with Python 3.x and was developed with Python 3.9.1.
+
+### Connect
+
+```
+POST http://127.0.0.1:27080/_connect/ HTTP/1.1
+content-type: application/json
+
+{
+    "MONGO_URI": "172.27.107.98:27017",
+    "MONGO_INITDB_ROOT_USERNAME": "root",
+    "MONGO_INITDB_ROOT_PASSWORD": "put your password here",
+    "MONGO_INITDB_DATABASE": "admin",
+    "MONGO_AUTH_MECHANISM": "SCRAM-SHA-256"
+}
+
+```
+
+### list_databases
+
+```
+GET http://localhost:27080/list_databases/ HTTP/1.1
+
+```
+
+### list_collections
+
+```
+GET http://localhost:27080/_use/WORD-CLOUD/list_collections HTTP/1.1
+
+```
+
+### count_documents
+
+```
+GET http://localhost:27080/_use/WORD-CLOUD/articles/count_documents HTTP/1.1
+
+```
+
+### find
+
+```
+GET http://localhost:27080/_use/WORD-CLOUD/articles/find HTTP/1.1
+
+```
 
 See [the wiki](https://github.com/10gen-labs/sleepy.mongoose/wiki) for documentation.
 
